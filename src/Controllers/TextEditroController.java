@@ -17,14 +17,12 @@ public class TextEditroController {
     public TextEditroController(TextEditorView textEditorView, TextEditorModel textEditorModel) {
         this.textEditorView = textEditorView;
         this.textEditorModel = textEditorModel;
-
         // use Lambda Expression
         textEditorView.ActionButtonSave((ActionEvent event)->ButtonSave()); // thục hiện khi được nhấn nút
         textEditorView.ActionButtonOpen((ActionEvent event)->ButtonOpen()); // thục hiện khi được nhấn nút
         textEditorView.ActionButtonBrowser((ActionEvent event)->ButtonBrowser()); // thục hiện khi được nhấn nút
         textEditorView.ActionJtree((TreeSelectionEvent select)->SelectInTree());// Thực hiện khi được nhấn trong jtree
     }
-
     // -------------------------------thực hiện hành động khi được nhấn nút--------------------------------------------
     private void ButtonSave(){
         DefaultMutableTreeNode selectNode= (DefaultMutableTreeNode) textEditorView.getjTree().getLastSelectedPathComponent();
@@ -59,25 +57,23 @@ public class TextEditroController {
         }
         // trưường hợp hủy Diglog thì không hiện tb
     }
-    private void ButtonBrowser(){// setJtreee from Diaglog File
-
-        JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setDialogTitle("BROWSER FOR JTREE ");
-        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int ReturnValuePath= jFileChooser.showOpenDialog(textEditorView.getjTree());
-        if(ReturnValuePath == JFileChooser.APPROVE_OPTION){// check xem có chọn folder không.
-        //    String filePath = jFileChooser.getSelectedFile().getAbsolutePath();
-//            File directory = jFileChooser.File directory = new File("C:");
-////            System.out.println(directory.getName());
-////            DefaultMutableTreeNode node = new DefaultMutableTreeNode("C:");
-////            textEditorView.getSelectedFile();
-//            setTreemodeData(node,directory);
+    private void ButtonBrowser() {// setJtreee from Diaglog File
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int option = fileChooser.showOpenDialog(null);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File selectedFolder = fileChooser.getSelectedFile();
+            String folderPath = selectedFolder.getAbsolutePath();
+//            Open New JFrame
+            TextEditorView textEditorView1= new TextEditorView(folderPath);
+            TextEditorModel textEditorModel1= new TextEditorModel();
+            TextEditroController textEditroController = new TextEditroController(textEditorView1,textEditorModel1);
+        } else {
+         //   System.out.println("Từ chối mở JFrame mới");
         }
-        // trưường hợp hủy Diglog thì không hiện tb
     }
-
-
     private void SelectInTree(){
+        System.out.println("Dùng hàm này đúng không>>");
         DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) textEditorView.getjTree().getLastSelectedPathComponent();
         if (selectNode != null && !selectNode.isLeaf()) {// Nếu nút được chọn không phải là một lá (thư mục)
 
@@ -113,7 +109,7 @@ public class TextEditroController {
         }
     }
     public static void main(String[] args) {
-        TextEditorView TextEditorView= new TextEditorView();
+        TextEditorView TextEditorView= new TextEditorView("D:/");// Default in Drive D:/
         TextEditorModel TextEditorModel = new TextEditorModel();
         TextEditroController textEditroController = new TextEditroController(TextEditorView,TextEditorModel);
     }

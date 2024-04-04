@@ -18,6 +18,21 @@ public class TextEditorModel {
             }
         }
     }
+    public void addDirectoriesToNode(DefaultMutableTreeNode parentNode) {
+        File[] roots = File.listRoots();
+        for (File root : roots) {
+            DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode(root.getAbsolutePath());
+            parentNode.add(rootTreeNode);
+            File[] files = root.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        rootTreeNode.add(new DefaultMutableTreeNode(file.getName()));
+                    }
+                }
+            }
+        }
+    }
     public String getAddress( DefaultMutableTreeNode node){
         Object[] path = node.getPath();
         StringBuilder address = new StringBuilder();
@@ -28,6 +43,20 @@ public class TextEditorModel {
             }
         }
         return address.toString();
+    }
+    public void addFilesToTree(File directory, DefaultMutableTreeNode parentNode) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    DefaultMutableTreeNode directoryNode = new DefaultMutableTreeNode(file.getName());
+                    parentNode.add(directoryNode);
+                    addFilesToTree(file, directoryNode); // Đệ quy để thêm các tệp con
+                } else {
+                    parentNode.add(new DefaultMutableTreeNode(file.getName())); // Thêm tệp vào cây
+                }
+            }
+        }
     }
 
     }

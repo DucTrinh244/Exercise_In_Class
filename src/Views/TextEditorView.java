@@ -3,7 +3,6 @@ package Views;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -16,19 +15,14 @@ public class TextEditorView {
     private JMenu fileMenu;
     private JMenuItem Save, Open, Browser;
     private JFrame frame;
-    private JTree jTree = new JTree();
+    private JTree jTree ;
     private JTextArea textArea;
-
     public JTree getjTree() {
         return jTree;
     }
-
-    public void setjTree(JTree jTree) {
-        this.jTree = jTree;
-    }
-    public TextEditorView() {
+    public TextEditorView(String path) {
         frame = new JFrame("Text Editor");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setSize(1000, 600);
         frame.setLocationRelativeTo(null);
@@ -38,7 +32,7 @@ public class TextEditorView {
         fileMenu = new JMenu("File");
         Save = new JMenuItem("Save");
         Open = new JMenuItem("Open");
-        Browser = new JMenuItem("Browser");
+        Browser = new JMenuItem("Browser Folder");
         fileMenu.add(Save);
         fileMenu.add(Open);
         fileMenu.add(Browser);
@@ -46,16 +40,28 @@ public class TextEditorView {
         frame.setJMenuBar(menuBar);
 
         JPanel panel = new JPanel(new BorderLayout());
+        //--------------------------------------------------------------------
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(path);
 
-        //-----------------
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode("D:");
-        File file = new File("D:/");
-     //   jTree = new JTree();
-        setTreemodeData(node,file);
-        panel.add(new JScrollPane(jTree), BorderLayout.WEST);
-         textArea = new JTextArea();
-        panel.add(new JScrollPane(textArea), BorderLayout.CENTER);
+        // Lấy tất cả các tệp trong ổ C và thêm chúng vào cây// ->>  Duyệt All Folder in this Pc ->> Big Data
+//        File[] roots = File.listRoots();
+//        for (File root : roots) {
+//            DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode(root.getAbsolutePath());
+//            rootNode.add(rootTreeNode);
+//            DefaultTree.addFilesToTree(root, rootTreeNode);
+//        }
+        File file= new File(path);
+        DefaultTree.addFilesToTree(file,rootNode);
+        jTree = new JTree(rootNode);
 
+        textArea = new JTextArea();
+
+        // Tạo JSplitPane với JTree ở bên trái và JTextArea ở bên phải
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(jTree), new JScrollPane(textArea));
+
+        // Thiết lập độ co dãn tùy ý cho JSplitPane
+        splitPane.setResizeWeight(0.2);
+        panel.add(splitPane, BorderLayout.CENTER);
         frame.add(panel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
@@ -80,14 +86,5 @@ public class TextEditorView {
     public void ActionJtree(TreeSelectionListener listener){
         jTree.addTreeSelectionListener(listener);
     }
-    public void setTreeData(DefaultMutableTreeNode rootNode,File filename) {
-        DefaultTree.populate(filename,rootNode);
-        jTree.setModel(new DefaultTreeModel(rootNode));
 
-    }
-    public void setTreemodeData(DefaultMutableTreeNode node,File namFile) {
-        DefaultTree.populate(namFile, node);
-        DefaultTreeModel model = new DefaultTreeModel(node);
-        jTree.setModel(model);
-    }
 }
