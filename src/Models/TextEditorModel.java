@@ -2,37 +2,10 @@ package Models;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.File;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class TextEditorModel {
-
-    public void populate(File file, DefaultMutableTreeNode node) {// thực hiện duyệt trong folder
-        if(file.isDirectory())
-        {
-            File[] files= file.listFiles();
-            if(files !=null) {
-                for(File f:files) {
-                    DefaultMutableTreeNode childNode= new DefaultMutableTreeNode(f.getName());
-                    node.add(childNode);
-                    populate(f, childNode);// đệ quy để duyẹt file
-                }
-            }
-        }
-    }
-    public void addDirectoriesToNode(DefaultMutableTreeNode parentNode) {
-        File[] roots = File.listRoots();
-        for (File root : roots) {
-            DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode(root.getAbsolutePath());
-            parentNode.add(rootTreeNode);
-            File[] files = root.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        rootTreeNode.add(new DefaultMutableTreeNode(file.getName()));
-                    }
-                }
-            }
-        }
-    }
     public String getAddress( DefaultMutableTreeNode node){
         Object[] path = node.getPath();
         StringBuilder address = new StringBuilder();
@@ -44,19 +17,34 @@ public class TextEditorModel {
         }
         return address.toString();
     }
-    public void addFilesToTree(File directory, DefaultMutableTreeNode parentNode) {
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    DefaultMutableTreeNode directoryNode = new DefaultMutableTreeNode(file.getName());
-                    parentNode.add(directoryNode);
-                    addFilesToTree(file, directoryNode); // Đệ quy để thêm các tệp con
-                } else {
-                    parentNode.add(new DefaultMutableTreeNode(file.getName())); // Thêm tệp vào cây
-                }
-            }
-        }
+//    public void addFilesToTree(File directory, DefaultMutableTreeNode parentNode) {// sử dụng mảng
+//        File[] files = directory.listFiles();
+//        if (files != null) {
+//            for (File file : files) {
+//                if (file.isDirectory()) {
+//                    DefaultMutableTreeNode directoryNode = new DefaultMutableTreeNode(file.getName());
+//                    parentNode.add(directoryNode);
+//                    addFilesToTree(file, directoryNode); // Đệ quy để thêm các tệp con
+//                } else {
+//                    parentNode.add(new DefaultMutableTreeNode(file.getName())); // Thêm tệp vào cây
+//                }
+//            }
+//        }
+//    }
+public static void addFilesToTree(File directory, DefaultMutableTreeNode parentNode) {// sử dụng stream để duyệt
+    File[] files = directory.listFiles();
+    if (files != null) {
+        Arrays.stream(files)
+              .collect(Collectors.toList())
+              .forEach(file -> {
+                    if (file.isDirectory()) {
+                        DefaultMutableTreeNode directoryNode = new DefaultMutableTreeNode(file.getName());
+                        parentNode.add(directoryNode);
+                        addFilesToTree(file, directoryNode); // Đệ quy để thêm các tệp con
+                    } else {
+                        parentNode.add(new DefaultMutableTreeNode(file.getName())); // Thêm tệp vào cây
+                    }
+                });
     }
-
+}
     }

@@ -86,5 +86,4 @@ public class TextEditorView {
     public void ActionJtree(TreeSelectionListener listener){
         jTree.addTreeSelectionListener(listener);
     }
-
 }

@@ -42,7 +42,6 @@ public class TextEditroController {
                 WriteFileToAddress(AddressFile);// check xem file có nằm trong jtree
             }
         }
-
     }
     private void ButtonOpen(){
         JFileChooser jFileChooser = new JFileChooser();
@@ -65,15 +64,21 @@ public class TextEditroController {
             File selectedFolder = fileChooser.getSelectedFile();
             String folderPath = selectedFolder.getAbsolutePath();
 //            Open New JFrame
-            TextEditorView textEditorView1= new TextEditorView(folderPath);
-            TextEditorModel textEditorModel1= new TextEditorModel();
-            TextEditroController textEditroController = new TextEditroController(textEditorView1,textEditorModel1);
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    TextEditorView textEditorView1 = new TextEditorView(folderPath);
+                    TextEditorModel textEditorModel1 = new TextEditorModel();
+                    TextEditroController textEditroController = new TextEditroController(textEditorView1, textEditorModel1);
+                    // Bất kỳ công việc nào khác cần thực hiện trong luồng này
+                }
+            });
+            thread.start();
         } else {
          //   System.out.println("Từ chối mở JFrame mới");
         }
     }
     private void SelectInTree(){
-        System.out.println("Dùng hàm này đúng không>>");
         DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) textEditorView.getjTree().getLastSelectedPathComponent();
         if (selectNode != null && !selectNode.isLeaf()) {// Nếu nút được chọn không phải là một lá (thư mục)
 
